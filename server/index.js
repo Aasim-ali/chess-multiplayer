@@ -11,6 +11,10 @@ dotenv.config({
 
 const app = express()
 
+app.get("/", (req, res) => {
+    res.send("Server is live");
+})
+
 app.use(cors())
 
 const server = http.createServer(app)
