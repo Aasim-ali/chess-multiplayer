@@ -1,0 +1,17 @@
+# Ignore node modules everywhere
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# React build
+client/build/
+
+# Environment files
+.env
+client/.env
+server/.env
+
+# OS/Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
