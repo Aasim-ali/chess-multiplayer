@@ -16,7 +16,7 @@ import StartGame from './components/StartGame'
 
 
 const App = () => {
-  const path = 'http://172.22.102.169:3000'
+  const path = 'https://chess-multiplayer-fcfr.onrender.com'
   const dispatch = useDispatch()
   useEffect(()=>{
     const setup = async() =>{
