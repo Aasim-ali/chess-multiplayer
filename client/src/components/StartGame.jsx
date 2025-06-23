@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { use } from 'react'
 import socketService from '../services/SocketService'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { opponentLeft } from '../redux/gameSlice'
 
 
 const StartGame = () => {
+    const dispatch = useDispatch()
     const handleExit = ()=>{
         socketService.off('waiting-for-opponent')
         socketService.off('game-started')
         socketService.off('receive-move')
         socketService.off('opponent-left')
         socketService.disconnect()
+        dispatch(opponentLeft())
     }
     const status = useSelector(state=> state.game.status)
     const handleStart = () =>{
