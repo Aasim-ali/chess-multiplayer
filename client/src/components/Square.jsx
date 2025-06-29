@@ -17,14 +17,14 @@ const Square = ({ row, col, piece, onClick }) => {
   
     return (
       <div
-        className={`sm:w-[60px] max-w-[60px] sm:h-[60px] max-w-[60px] flex items-center justify-center cursor-pointer sm:text-2xl text-sm font-bold ${
-          isDark ? 'bg-[#b58863]' : 'bg-[#f0d9b5]'
+        className={`sm:w-[60px] max-w-[60px] sm:h-[60px] max-w-[60px] flex items-center justify-center cursor-pointer text-2xl font-bold ${
+          isDark ? '' : 'bg-gray-400'
         }  ${(myColor && myColor === 'black') && 'rotate-180'}`}
         onClick={onClick}
       >
         {code && (
-          <span className={`${
-          code.startsWith('w') ? 'text-white' : 'text-black'
+          <span className={` drop-shadow-md ${
+          code.startsWith('w') ? 'text-white' : 'text-slate-600'
         }`}>
             {pieceIcons[code]}
           </span>

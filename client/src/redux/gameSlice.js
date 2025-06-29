@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice,} from '@reduxjs/toolkit'
 import { chessService } from '../services/ChessService'
-import socketService from '../services/SocketService'
+import { makeMove } from '../utils/makeMove'
 
 const initialState = {
   board: chessService.getBoard(),            
@@ -9,36 +9,10 @@ const initialState = {
   status: 'Please start the game..',
   myColor: null,
   isMyTurn: false,
+  mode: "online",
 }
 
-export const makeMove = createAsyncThunk(
-    'game/makeMove',
-    async ({ from, to }, thunkAPI) => {
-      try {
-        const move = chessService.move(from, to)
-        if (move) {
-            
-          socketService.emit('send-move', {from, to})
 
-          const board = chessService.getBoard()
-          const turn = chessService.turn()
-          const status = chessService.status()
-
-          return {
-              board,
-              turn,
-              status
-          }
-          } else {
-          console.log("❌ Invalid move")
-          return thunkAPI.rejectWithValue('Invalid move')
-          }
-        } catch (error) {
-            console.error("❌ Error inside makeMove:", error)
-            return thunkAPI.rejectWithValue('Unexpected error')
-        }
-    }
-)
 
 const gameSlice = createSlice({
     name: 'game',
@@ -90,7 +64,19 @@ const gameSlice = createSlice({
         state.board = chessService.getBoard()
         state.currentTurn = 'white'
         state.selectedSquare = null
+        state.myColor = null
       },
+
+      setMode: (state, action) =>{
+        state.mode = action.payload
+        state.status = 'Please start the game..'
+        state.isMyTurn = null
+        chessService.reset()
+        state.board = chessService.getBoard()
+        state.currentTurn = 'white'
+        state.selectedSquare = null
+        state.myColor = null
+      }
     },
     extraReducers: (builder) =>{
         builder
@@ -118,5 +104,6 @@ export const {
     setMyColor,
     receiveMove,
     opponentLeft,
+    setMode,
 } = gameSlice.actions
 export default gameSlice.reducer

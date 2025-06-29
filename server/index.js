@@ -20,7 +20,7 @@ app.use(cors())
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: "https://chess-multiplayer-pi.vercel.app",
+        origin: "https://chess-multiplayer-pi.vercel.app", //https://chess-multiplayer-pi.vercel.app
         methods: ['GET', 'POST']
     }
 })

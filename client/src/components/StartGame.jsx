@@ -1,21 +1,26 @@
-import React, { use } from 'react'
 import socketService from '../services/SocketService'
 import { useSelector, useDispatch } from 'react-redux'
-import { opponentLeft } from '../redux/gameSlice'
+import { opponentLeft, setGameStatus } from '../redux/gameSlice'
+import { disconnectHandler } from '../utils/socketDisconnectHandler'
 
 
 const StartGame = () => {
     const dispatch = useDispatch()
+    const mode = useSelector(s => s.game.mode)
     const handleExit = ()=>{
-        socketService.off('waiting-for-opponent')
-        socketService.off('game-started')
-        socketService.off('receive-move')
-        socketService.off('opponent-left')
-        socketService.disconnect()
+        mode==="online" && disconnectHandler()
         dispatch(opponentLeft())
     }
     const status = useSelector(state=> state.game.status)
     const handleStart = () =>{
+        if(mode==="offline" ){
+            if(status!=="Please start the game.."){
+                handleExit()
+                return
+            }
+            dispatch(setGameStatus("playing"))
+            alert("Game has been started, enjoy the game..")
+        }
         if(status!=="Please start the game.."){
             handleExit()
             return
@@ -23,7 +28,7 @@ const StartGame = () => {
         socketService.emit('start-game')
     }
   return (
-    <div className='bg-[#b58863] text-black w-full max-w-[480px] rounded-lg  text-center py-2 cursor-pointer hover:shadow-lg font-[cursive] text-sm sm:text-lg'
+    <div className='border-1 border-white text-white px-4 rounded-lg  text-center py-2 cursor-pointer hover:shadow-sm hover:shadow-white font-[cursive] text-sm sm:text-lg'
         onClick={handleStart}
     >
         {

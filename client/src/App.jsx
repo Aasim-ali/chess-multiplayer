@@ -1,63 +1,24 @@
-import React, { useEffect } from 'react'
-
-import ChessBoard from './components/ChessBoard'
-import StatusBar from './components/StatusBar'
-import socketService from './services/SocketService'
-import {useDispatch} from 'react-redux'
-
-import {
-  setGameStatus,
-  receiveMove,
-  opponentLeft,
-  setMyColor
-} from './redux/gameSlice'
-import StartGame from './components/StartGame'
+import { useSocketSetup } from './utils/socketEventHandler'
+import Header from './components/Header'
+import Online from './pages/Online'
+import { Route, Routes } from 'react-router-dom'
+import Offline from './pages/Offline'
+import { useSelector } from 'react-redux'
 
 
 
 const App = () => {
-  const path = 'https://chess-multiplayer-fcfr.onrender.com'
-  const dispatch = useDispatch()
-  useEffect(()=>{
-    const setup = async() =>{
-      await socketService.connect(path)
-
-      socketService.on('waiting-for-opponent', () => {
-        dispatch(setGameStatus('waiting'))
-        console.log("waiting for opp");
-        
-      })
-
-      socketService.on('game-started', ({ color }) => {
-        dispatch(setMyColor(color))
-        dispatch(setGameStatus('playing'))
-      })
-
-      socketService.on('receive-move', (move) => {
-        dispatch(receiveMove(move))
-        console.log('Received opponent move:', move)
-      })
-
-      socketService.on('opponent-left', () => {
-        dispatch(opponentLeft())
-        alert('Opponent has left the game.')
-      })
-    }
-    setup()
-    return () => {
-      socketService.off('waiting-for-opponent')
-      socketService.off('game-started')
-      socketService.off('receive-move')
-      socketService.off('opponent-left')
-      socketService.disconnect()
-    }
-  }, [dispatch])
+  const mode = useSelector(s => s.game.mode)
+  const path = 'https://chess-multiplayer-fcfr.onrender.com' //https://chess-multiplayer-fcfr.onrender.com
+  useSocketSetup(path, mode)
   
   return (
-    <div className='h-[100vh] w-[100%] flex flex-col justify-center items-center gap-12 bg-gray-200'>
-      <ChessBoard />
-      <StatusBar />
-      <StartGame />
+    <div className='h-[100vh] w-[100%]  bg-linear-to-bl from-black to-gray-700 '>
+      <Header/>
+      <Routes>
+        <Route path='/' element={<Online/>}/>
+        <Route path='/offline' element={<Offline/>}/>
+      </Routes>
     </div>
   )
 }
